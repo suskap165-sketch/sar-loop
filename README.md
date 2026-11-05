@@ -1,37 +1,26 @@
-# SAR LOOP — System of Reality Authorization
+# SAR LOOP
 
-Interaktywna aplikacja webowa mapująca koncepcję **SAR LOOP** autorstwa **Pawła Suski**
-(White Paper v1.0 / Generation A.G.I.) — framework opisujący, jak w warunkach Przemysłu 5.0
-ustalać, co i kto jest prawdziwy.
+**System of Reality Authorization** — Pawel Suska, Industry 5.0 White Paper v1.0
 
-Aplikacja jest demonstracją i mapą koncepcji. **Nie jest wdrożeniem systemu weryfikacji**
-i nie zawiera żadnej realnej biometrii ani kryptografii.
+>TECHNOLOGY MAY ACT. HUMANKIND MUST REMAIN IN CONTROL.
 
-## Co zawiera
+## Co to jest
 
-| Widok | Zawartość |
-|---|---|
-| **Pętla** | Sześć kroków Layer II na okręgu: SCAN → ANALYZE → REALITY CHECK → LEGITIMIZE → OPERATE → PROVE & FEEDBACK. Kliknięcie etapu pokazuje wejście, wyjście i warunek przejścia. |
-| **Filary** | Layer I — Trust Infrastructure: BODY, COMPUTE, TWIN. |
-| **Symulator** | Cztery warunki autoryzacji z wagami; pętla domyka się dopiero przy 100%, inaczej pokazuje, na którym etapie żądanie zostało zatrzymane. |
-| **O projekcie** | Czym jest koncepcja, jak czytać aplikację i jaki jest jej status. |
+Architektura autoryzacji rzeczywistosci: 3 filary zaufania (BODY, COMPUTE, TWIN) i 6 krokow zamknietej petli (SCAN, ANALYZE, LEGITIMIZE, OPERATE, PROVE & FEEDBACK, REALITY CHECK).
 
-## Struktura
+## Aplikacja
 
-```
-index.html    widok i nawigacja (zakładki)
-styles.css    warstwa wizualna (ciemny HUD, siatka, akcent cyjan)
-app.js        dane koncepcji + logika pętli i symulatora
-```
+`index.html` — jeden samodzielny plik, bez zaleznosci. Otwiera sie w przegladarce, dziala offline. Cztery zakladki:
 
-## Uruchomienie
+- **Petla** — klikalne kolo z 6 krokami i 3 filary zaufania
+- **Materialy** — rejestr 18 materialow zrodlowych z wyszukiwaniem i filtrami
+- **Os czasu** — trzy daty regulacyjne: 7.07.2024 (ISA), 3.11.2026 (kod gotowki), 24.12.2026 (EUDI Wallet)
+- **Granica material / teza** — co pochodzi z materialu, a co jest teza autorska
 
-Otwórz `index.html` w przeglądarce — aplikacja nie wymaga serwera, budowania ani zależności.
+## Uruchomienie lokalne
 
-## Status koncepcji
+Otworz `index.html` w przegladarce. Nie wymaga serwera ani instalacji.
 
-Framework odwołuje się do realnych regulacji i standardów (eIDAS 2.0 / EUDI Wallet,
-C2PA, W3C DID, kontrola eksportu ECCN 3A090), ale jako całość pozostaje autorską hipotezą
-badawczą publikowaną w kanałach autora — bez niezależnej weryfikacji i bez wdrożenia.
+## Zrodla
 
-Motto: *Technology may act. Humanity must remain in control.*
+Wszystkie dane w aplikacji pochodza z 18 materialow wlasnych. Pozycje bez pokrycia w materiale sa jawnie oznaczone w zakladce "Granica material / teza".

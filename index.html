@@ -1,1 +1,543 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAR LOOP — System of Reality Authorization</title>
+<style>
+:root{
+  --bg:#070C18; --bg2:#0C1424; --panel:#101A2E; --panel2:#16223A;
+  --line:#22304D; --ink:#E8EEF9; --muted:#8A9BBD;
+  --accent:#3B82F6; --accent2:#1F4E79;
+  --ok:#22C55E; --warn:#F59E0B; --bad:#EF4444;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(1100px 600px at 78% -8%, rgba(59,130,246,.18), transparent 62%),
+    radial-gradient(900px 500px at 8% 108%, rgba(31,158,122,.13), transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  font:15px/1.55 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 100%);
+}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:26px 20px 70px}
+header.top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{
+  width:46px;height:46px;border-radius:13px;flex:0 0 auto;
+  background:linear-gradient(140deg,#3B82F6,#1F4E79);
+  display:grid;place-items:center;font-weight:800;font-size:15px;letter-spacing:.5px;
+  box-shadow:0 0 0 1px rgba(59,130,246,.4), 0 8px 24px rgba(59,130,246,.28);
+}
+.brand h1{font-size:19px;font-weight:700;letter-spacing:.2px;line-height:1.15}
+.brand p{font-size:11.5px;color:var(--muted);letter-spacing:.9px;text-transform:uppercase;margin-top:2px}
+.topmeta{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.7}
+.topmeta b{color:var(--ink);font-weight:600}
+.motto{
+  margin:20px 0 4px;padding:13px 18px;border-radius:var(--r);
+  border:1px solid rgba(59,130,246,.28);
+  background:linear-gradient(90deg,rgba(59,130,246,.12),rgba(59,130,246,.02));
+  font-size:12.5px;letter-spacing:1.6px;font-weight:600;color:#BFD4F5;text-align:center;
+}
+nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 24px}
+nav.tabs button{
+  font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+  padding:9px 16px;border-radius:10px;transition:.16s;
+}
+nav.tabs button:hover{color:var(--ink);border-color:#31415F;background:rgba(255,255,255,.055)}
+nav.tabs button.on{color:#fff;background:linear-gradient(140deg,#3B82F6,#2563EB);border-color:transparent;box-shadow:0 6px 18px rgba(59,130,246,.3)}
+section{display:none}
+section.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2.sec{font-size:15px;font-weight:700;letter-spacing:.4px;margin:0 0 6px}
+p.sub{color:var(--muted);font-size:13px;margin-bottom:20px;max-width:74ch}
+.card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.loopwrap{display:grid;grid-template-columns:minmax(330px,1fr) minmax(280px,0.85fr);gap:26px;align-items:center}
+@media(max-width:860px){.loopwrap{grid-template-columns:1fr}}
+svg.loop{width:100%;height:auto;overflow:visible}
+.ring{fill:none;stroke:#1D2A44;stroke-width:1.5}
+.ring2{fill:none;stroke:rgba(59,130,246,.28);stroke-width:1;stroke-dasharray:4 7}
+.node{cursor:pointer}
+.node circle.dot{transition:.18s}
+.node:hover circle.dot{filter:brightness(1.35)}
+.node.active circle.dot{stroke:#fff;stroke-width:2.5}
+.node text{font-size:9.6px;font-weight:700;letter-spacing:.55px;fill:#C6D6F0;text-anchor:middle;pointer-events:none;transition:.18s}
+.node.active text{fill:#fff}
+.hub circle{fill:rgba(59,130,246,.1);stroke:rgba(59,130,246,.45);stroke-width:1.2}
+.hub text{fill:#DCE8FB;font-size:11px;font-weight:800;letter-spacing:1.5px;text-anchor:middle}
+.detail{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:22px;min-height:230px}
+.detail .stepno{font-size:11px;letter-spacing:1.7px;color:var(--accent);font-weight:700;text-transform:uppercase}
+.detail h3{font-size:21px;font-weight:700;margin:8px 0 10px;letter-spacing:.3px}
+.detail p{color:#B5C4DE;font-size:13.5px}
+.detail .hint{margin-top:18px;font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:14px}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+@media(max-width:700px){.pillars{grid-template-columns:1fr}}
+.pillar{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.pillar .mark{font-size:10.5px;font-weight:800;letter-spacing:1.6px;color:#5F86C9}
+.tlrow{display:grid;grid-template-columns:132px 34px 1fr;gap:0}
+@media(max-width:640px){.tlrow{grid-template-columns:104px 30px 1fr}}
+.tldate{font-size:12.5px;font-weight:700;color:#BFD4F5;padding:20px 12px 0 0;text-align:right;letter-spacing:.3px}
+.tlrail{position:relative;display:flex;justify-content:center;padding-top:20px}
+.tldot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;position:relative;z-index:1}
+.tldot.g{background:var(--ok);box-shadow:0 0 10px rgba(34,197,94,.65)}
+.tldot.o{background:var(--accent);box-shadow:0 0 10px rgba(59,130,246,.65)}
+.tlline{position:absolute;top:31px;bottom:-14px;width:1.5px;background:linear-gradient(180deg,rgba(59,130,246,.5),rgba(59,130,246,.1))}
+.tlbody{padding:18px 0 26px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.tlrow:last-child .tlbody{border-bottom:none}
+.tlbody h4{font-size:14.5px;font-weight:650;margin-bottom:7px}
+.tlbody p{font-size:12.8px;color:#A9B9D6;line-height:1.6}
+.tlsrc{font-size:11px;color:#5F7396;margin-top:9px;font-style:italic}
+.pillar .k{font-size:12.5px;font-weight:700;letter-spacing:1.5px;margin:10px 0 7px;color:#DCE8FB}
+.pillar .d{font-size:12.5px;color:var(--muted)}
+.pillar .s{font-size:11px;color:#5F7396;margin-top:10px;font-style:italic}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.search{position:relative;flex:1 1 240px;min-width:200px}
+.search input{
+  width:100%;font:inherit;font-size:13.5px;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:10px 14px 10px 36px;outline:none;transition:.16s;
+}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.search input::placeholder{color:#5E708F}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{
+  font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--muted);
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+  padding:7px 13px;border-radius:999px;transition:.16s;display:flex;align-items:center;gap:7px;
+}
+.chip:hover{color:var(--ink)}
+.chip i{width:8px;height:8px;border-radius:50%;display:block}
+.chip.on{color:#fff;background:rgba(59,130,246,.16);border-color:rgba(59,130,246,.5)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.item{
+  background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);
+  border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:9px;transition:.16s;
+}
+.item:hover{border-color:#31415F;transform:translateY(-2px)}
+.item .head{display:flex;align-items:flex-start;gap:10px}
+.item .num{
+  flex:0 0 auto;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+  font-size:11px;font-weight:700;color:#9EB8E4;background:rgba(59,130,246,.13);border:1px solid rgba(59,130,246,.25);
+}
+.item h4{font-size:13.5px;font-weight:600;line-height:1.35;letter-spacing:.1px}
+.item .body{font-size:12.5px;color:#A9B9D6;line-height:1.6}
+.item .foot{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:auto;padding-top:11px;border-top:1px solid rgba(255,255,255,.05)}
+.tag{font-size:10.5px;font-weight:600;letter-spacing:.4px;padding:3.5px 9px;border-radius:999px;border:1px solid}
+.tag.c{color:#9EB8E4;border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.1)}
+.tag.s-ok{color:#7FE3A6;border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.1)}
+.tag.s-own{color:#BFD4F5;border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.1)}
+.tag.s-demo{color:#FCD9A0;border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.1)}
+.tag.s-help{color:#B9A9E8;border-color:rgba(142,91,217,.35);background:rgba(142,91,217,.1)}
+.item .note{font-size:11.5px;color:#6F82A6;font-style:italic}
+.empty{padding:50px 20px;text-align:center;color:var(--muted);font-size:13.5px}
+.btable{width:100%;border-collapse:separate;border-spacing:0;font-size:12.8px}
+.btable th{
+  text-align:left;font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);
+  padding:0 14px 11px;border-bottom:1px solid var(--line);font-weight:700;
+}
+.btable td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.045);vertical-align:top}
+.btable tr:last-child td{border-bottom:none}
+.btable .cl{font-weight:600;color:var(--ink);width:34%}
+.btable .st{width:22%}
+.btable .bs{color:var(--muted);font-size:12.2px}
+.dot{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600}
+.dot::before{content:"";width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.dot.g{color:#7FE3A6}.dot.g::before{background:var(--ok);box-shadow:0 0 8px rgba(34,197,94,.6)}
+.dot.r{color:#FCA5A5}.dot.r::before{background:var(--bad);box-shadow:0 0 8px rgba(239,68,68,.6)}
+.note-box{
+  margin-top:20px;padding:16px 18px;border-radius:var(--r);
+  border:1px solid rgba(239,68,68,.28);background:rgba(239,68,68,.07);
+  font-size:12.8px;color:#E4B9B9;line-height:1.65;
+}
+.note-box b{color:#FCA5A5}
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:#5F7396;display:flex;gap:12px;flex-wrap:wrap}
+footer span:last-child{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo">SAR</div>
+      <div>
+        <h1>SAR LOOP</h1>
+        <p>System of Reality Authorization</p>
+      </div>
+    </div>
+    <div class="topmeta">
+      <div><b id="author"></b></div>
+      <div id="paper"></div>
+      <div>Protokół archiwum · 18 materiałów</div>
+    </div>
+  </header>
+
+  <div class="motto" id="motto"></div>
+
+  <nav class="tabs">
+    <button data-tab="tab-loop" class="on">Pętla</button>
+    <button data-tab="tab-items">Materiały</button>
+    <button data-tab="tab-time">Oś czasu</button>
+    <button data-tab="tab-boundary">Granica materiał / teza</button>
+  </nav>
+
+  <section id="tab-loop" class="on">
+    <h2 class="sec">Sześć kroków pętli autoryzacji</h2>
+    <p class="sub">Zamknięty cykl: sygnał z ciała wchodzi do systemu, system nadaje uprawnienie, wykonuje operację i wraca z dowodem do kontroli w świecie fizycznym. Kliknij węzeł, aby zobaczyć jego rolę.</p>
+    <div class="loopwrap">
+      <svg class="loop" viewBox="0 0 380 380" role="img" aria-label="Koło SAR LOOP z sześcioma krokami"></svg>
+      <div class="detail" id="detail"></div>
+    </div>
+    <h2 class="sec" style="margin-top:34px">Trzy filary zaufania</h2>
+    <p class="sub">Warstwa infrastruktury zaufania, na której opiera się pętla. Wszystkie trzy pochodzą z materiałów źródłowych.</p>
+    <div class="pillars" id="pillars"></div>
+  </section>
+
+  <section id="tab-items">
+    <h2 class="sec">Rejestr materiałów źródłowych</h2>
+    <p class="sub">Wszystkie 18 plików z archiwum, z opisem zawartości i rekomendacją. Wyszukiwanie obejmuje tytuł, opis i status.</p>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Szukaj w materiałach...">
+      </div>
+    </div>
+    <div class="toolbar" style="margin-bottom:10px"><div class="chips" id="clusters"></div></div>
+    <div class="toolbar" style="margin-bottom:22px"><div class="chips" id="statuses"></div></div>
+    <div class="grid" id="items"></div>
+  </section>
+
+  <section id="tab-time">
+    <h2 class="sec">Oś czasu regulacyjna</h2>
+    <p class="sub">Trzy daty z materiałów źródłowych układają się w jedną linię: od wdrożenia ISA w pojazdach, przez jednorazową weryfikację przy wypłacie gotówki, do obowiązkowego portfela tożsamościowego w Unii.</p>
+    <div class="tl" id="timeline"></div>
+  </section>
+
+  <section id="tab-boundary">
+    <h2 class="sec">Co jest materiałem, a co tezą</h2>
+    <p class="sub">Rozdzielenie tych dwóch warstw jest warunkiem wiarygodności. Zielony punkt oznacza twierdzenie oparte na materiale lub potwierdzone zewnętrznie. Czerwony oznacza twierdzenie bez pokrycia w archiwum.</p>
+    <div class="card" style="padding:8px 6px">
+      <table class="btable">
+        <thead><tr><th>Twierdzenie</th><th>Status</th><th>Podstawa</th></tr></thead>
+        <tbody id="btable"></tbody>
+      </table>
+    </div>
+    <div class="note-box">
+      <b>Trzy pozycje z wersji pierwotnej nie weszły do protokołu.</b> Przypisanie protokołu MCP jako własnego wynalazku jest nieprawdziwe — to standard ogłoszony przez Anthropic w listopadzie 2024. Budżety 80k / 30k / 40k GBP nie mają pokrycia w archiwum. Lista 32 tytułów i klaster „Pokolenie A” nie występują w żadnym z 18 plików.
+    </div>
+  </section>
+
+  <footer>
+    <span>SAR LOOP — protokół archiwum</span>
+    <span>Źródło: 18 materiałów własnych</span>
+  </footer>
+</div>
+
+<script>
+const SAR = {
+  meta: {
+    title: "SAR LOOP",
+    subtitle: "System of Reality Authorization",
+    author: "Pawel Suska",
+    paper: "Industry 5.0 White Paper v1.0",
+    date: "5 listopada 2026",
+    motto: "TECHNOLOGY MAY ACT. HUMANKIND MUST REMAIN IN CONTROL.",
+  },
+  pillars: [
+    { key: "BODY", mark: "CIAŁO", desc: "Fizyczne ciało jako źródło zaufania. Warstwa pierwsza architektury.", src: "Infografiki SAR LOOP" },
+    { key: "COMPUTE", mark: "MOC", desc: "Moc obliczeniowa autoryzująca. Warstwa druga architektury.", src: "SAR MODEL LOOP" },
+    { key: "TWIN", mark: "ODBICIE", desc: "Cyfrowe odbicie człowieka powiązane z jego ciałem.", src: "Infografiki SAR LOOP" },
+  ],
+  steps: [
+    { n: 1, key: "SCAN", desc: "Odczyt sygnału z ciała i kontekstu." },
+    { n: 2, key: "ANALYZE", desc: "Analiza sygnału i porównanie ze wzorcem." },
+    { n: 3, key: "LEGITIMIZE", desc: "Nadanie uprawnienia do działania." },
+    { n: 4, key: "OPERATE", desc: "Wykonanie operacji przez system lub agenta." },
+    { n: 5, key: "PROVE & FEEDBACK", desc: "Dowód wykonania i zwrot informacji." },
+    { n: 6, key: "REALITY CHECK", desc: "Kontrola wyniku w świecie fizycznym." },
+  ],
+  clusters: [
+    { key: "rdzen", label: "Rdzeń technologiczny", color: "#2E6FD9", count: 4 },
+    { key: "tozsamosc", label: "Tożsamość i portfel", color: "#1F9E7A" },
+    { key: "przestrzen", label: "Przestrzeń i pojazd", color: "#D9842E" },
+    { key: "administracja", label: "Administracja", color: "#8E5BD9" },
+    { key: "inne", label: "Materiały pomocnicze", color: "#6B7280" },
+  ],
+  items: [
+    { id: 1, title: "SAR LOOP — infografika A", cluster: "rdzen", content: "TRUST INFRASTRUCTURE — 3 filary: BODY, COMPUTE, TWIN. SAR LOOP — 6 kroków jako okrąg: SCAN, ANALYZE, LEGITIMIZE, OPERATE, PROVE & FEEDBACK, REALITY CHECK. Hasło: TECHNOLOGY MAY ACT. HUMANKIND MUST REMAIN IN CONTROL.", status: "materiał własny", note: "Kanoniczna wersja diagramu." },
+    { id: 2, title: "SAR LOOP — infografika B", cluster: "rdzen", content: "Powtórka układu dwóch warstw z ikonami: człowiek dla BODY, mikroprocesor dla COMPUTE, glob dla TWIN.", status: "materiał własny", note: "Druga wersja tego samego diagramu co materiał 1." },
+    { id: 3, title: "SAR MODEL LOOP", cluster: "rdzen", content: "Wariant przepływu: COMPUTE z ikoną procesora, WALLET dwukrotnie, IDENTITY z kartą, DATA, TIWII, GLOBAL PREDICTION. Etykieta NVIDIA A100 z parametrem 80%.", status: "materiał własny", note: "Wartość 80% wymaga opisu lub usunięcia." },
+    { id: 4, title: "SAR LOOP — V REWOLUCJA PRZEMYSŁOWA", cluster: "rdzen", content: "Łańcuch pojęć: MYŚL → CIAŁO → PORTFEL → PRZESTRZEŃ, połączone neonowymi strzałkami.", status: "materiał własny", note: "Wersja narracyjna do prezentacji." },
+    { id: 5, title: "REALITY AUTHORIZED — portret", cluster: "rdzen", content: "Portret autora na tle technologicznym. Tekst REALITY AUTHORIZED, Pawel Suska, INDUSTRY 5.0, Industry 5.0 White Paper v1.0. Okrągły diagram z segmentami BODY, REALITY, AI CLONE, DATA, COMPUTE, TWIN.", status: "materiał własny", note: "Okładka i materiał autorski." },
+    { id: 6, title: "EUDI Wallet — plakat obowiązkowy", cluster: "tozsamosc", content: "Napis PORTFEL OBOWIĄZKOWY. Banner EUDI WALLET — OBOWIĄZKOWY DO 24.12.2026 na czerwonym tle. Odsyłacz EU 2024/1183. Kalendarz z datą 24.12.2026 oznaczoną jako DEADLINE.", status: "potwierdzone", note: "Termin potwierdzony; ramy wymagają doprecyzowania." },
+    { id: 7, title: "EUDI Wallet — integracja z instytucjami", cluster: "tozsamosc", content: "Smartfon z aplikacją EUDI WALLET. Po lewej ikony urzędu administracji publicznej i banku połączone strzałkami. Tarcza bezpieczeństwa.", status: "potwierdzone", note: "Sekcja o interoperacyjności z sektorem publicznym." },
+    { id: 8, title: "SARLoc — portfel kryptowalutowy", cluster: "tozsamosc", content: "Logo SARLoc, PORTFEL KRYPTOWALUTOWY, panel SECURE WALLET ACCESS, ikona mózgu z wykresem, saldo 12.458 BTC, sekcje PORTFEL CYFROWY z PRIVATE KEY i HASH GENERATION, patent US11681789B2, hasło FALA MÓZGOWA = KLUCZ PRYWATNY.", status: "materiał własny", note: "Rozdzielić warstwy interfejsu; zweryfikować odniesienie do patentu." },
+    { id: 9, title: "ISA w pojeździe", cluster: "przestrzen", content: "Zrzut z jazdy: prędkościomierz 74 km/h, ikona limitu 50 km/h, ISA aktywna. Czerwony banner SAR LOOP PART 5/6. Tekst PRZESTRZEŃ DECYDUJE CZY JEDZIESZ. Data ISA od 7.07.2024.", status: "fakt regulacyjny", note: "Przykład działającej pętli — wymaga weryfikacji prawnej." },
+    { id: 10, title: "Miasto 15-minutowe i kokpit", cluster: "przestrzen", content: "Mapa miejska z obszarami parków, edukacji i handlu. Kokpit z inteligentnym wspomaganiem prędkości. Znaczniki GEOFENCE ACTIVE i ISA ACTIVE. Wskazanie 30 km/h.", status: "materiał własny", note: "Warstwa przestrzenna SAR LOOP." },
+    { id: 11, title: "HMRC i GOV.UK One Login — lista usług", cluster: "administracja", content: "Lista usług: konto HMRC, eVisas, Universal Credit, konto podatkowe osobiste, konto opieki nad dzieckiem, prognoza emerytury państwowej.", status: "materiał pomocniczy", note: "Skala weryfikacji tożsamości w praktyce." },
+    { id: 12, title: "HMRC — błąd weryfikacji", cluster: "administracja", content: "Komunikat: Nie możemy potwierdzić Twojej tożsamości. Odesłanie do GOV.UK One Login. Informacja, że HMRC nie może potwierdzić tożsamości ani pomóc w logowaniu.", status: "materiał pomocniczy", note: "Koszt braku autoryzacji rzeczywistości." },
+    { id: 13, title: "Kod wypłaty gotówki", cluster: "administracja", content: "Kod sześciocyfrowy 792 551, ważność do 18:41, 03/11/2026. Przyciski Share i Cancel code. Banner o braku miejsca na kopię zapasową.", status: "materiał demonstracyjny", note: "Materiał demonstracyjny." },
+    { id: 14, title: "Kod gotówki 130 GBP", cluster: "administracja", content: "Kod gotówki 130,00 GBP, ważność do 3 listopada 2026. Mapa z lokalizacją najbliższego bankomatu NatWest.", status: "materiał demonstracyjny", note: "Materiał demonstracyjny." },
+    { id: 15, title: "Ziemia z orbity", cluster: "inne", content: "Zdjęcie Ziemi z kosmosu, Ameryka Północna w nocy, światła miast. Polski podpis: Naładowana w 1%.", status: "materiał pomocniczy", note: "Materiał ilustracyjny." },
+    { id: 16, title: "Karta IELTS", cluster: "inne", content: "Karta z kodem sześciocyfrowym, status LTE, poziom baterii 55%, znacznik czasu.", status: "materiał administracyjny", note: "Materiał administracyjny." },
+    { id: 17, title: "Podcast #554", cluster: "inne", content: "Interfejs podcastu wideo, tytuł #554 Największe Zagrożenie, sekcja komentarzy, znaczniki czasu i baterii.", status: "materiał pomocniczy", note: "Kanał dystrybucji treści." },
+    { id: 18, title: "WhatsApp — rozmowa audio", cluster: "inne", content: "Zrzut ekranu aktywnego połączenia audio. Status w języku polskim. Kontrolki dźwięku, wideo i wyciszenia.", status: "materiał pomocniczy", note: "Materiał pomocniczy." },
+  ],
+  timeline: [
+    { date: "7 lipca 2024", label: "ISA w nowych pojazdach", desc: "Intelligent Speed Assistance aktywne w nowych pojazdach w Unii. Materiał 9 pokazuje je w działaniu: 74 km/h przy limicie 50 km/h.", src: "Materiał 9", tone: "ok" },
+    { date: "3 listopada 2026", label: "Kod gotówki 130 GBP", desc: "Kod wypłaty ważny do 3 listopada 2026. Materiał 14 — przykład weryfikacji jednorazowej w obrocie gotówkowym.", src: "Materiał 14", tone: "own" },
+    { date: "24 grudnia 2026", label: "EUDI Wallet obowiązkowy", desc: "Portfel tożsamościowy EUDI staje się obowiązkowy na podstawie rozporządzenia 2024/1183. Materiały 6 i 7.", src: "Materiały 6 i 7", tone: "ok" },
+  ],
+  boundary: [
+    { claim: "SAR LOOP: 3 filary, 6 kroków pętli", status: "materiał własny", ok: true, base: "Infografiki SAR LOOP" },
+    { claim: "Hasło TECHNOLOGY MAY ACT. HUMANKIND MUST REMAIN IN CONTROL", status: "materiał własny", ok: true, base: "Infografika SAR LOOP" },
+    { claim: "Układ warstwowy wobec Przemysłu 5.0", status: "teza autorska", ok: true, base: "White Paper v1.0" },
+    { claim: "EUDI Wallet obowiązkowy do 24.12.2026", status: "potwierdzone", ok: true, base: "Rozporządzenie 2024/1183" },
+    { claim: "ISA aktywne od 7.07.2024", status: "do potwierdzenia", ok: false, base: "Banner na obrazie" },
+    { claim: "MCP jako własny wynalazek", status: "błędne", ok: false, base: "Standard ogłoszony przez Anthropic, listopad 2024" },
+    { claim: "Budżety 80k / 30k / 40k GBP z rejestru", status: "brak danych", ok: false, base: "Brak rejestru w archiwum" },
+    { claim: "Prognoza rynku 96,3 mld → 312 mld", status: "nieprzypisane", ok: false, base: "Brak w archiwum i brak źródła" },
+    { claim: "Lista 32 tytułów, klaster Pokolenie A", status: "nie istnieje w materiale", ok: false, base: "Brak w archiwum" },
+  ],
+};
+</script>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+$$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  $$('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.tab));
+}));
+const R=118, NV=190, CX=190, CY=190, N=SAR.steps.length;
+const NODE_R=27;
+let active=0;
+const svgNS='http://www.w3.org/2000/svg';
+const loop=$('svg.loop');
+function polar(i,radius){
+  const ang=(i/N)*Math.PI*2 - Math.PI/2;
+  return {x:CX+radius*Math.cos(ang), y:CY+radius*Math.sin(ang), ang};
+}
+(function buildLoop(){
+  const g=document.createElementNS(svgNS,'g');
+  [[R,0],[R-34,1]].forEach(([r,alt])=>{
+    const c=document.createElementNS(svgNS,'circle');
+    c.setAttribute('cx',CX);c.setAttribute('cy',CY);c.setAttribute('r',r);
+    c.setAttribute('class',alt?'ring2':'ring');
+    g.appendChild(c);
+  });
+  for(let i=0;i<N;i++){
+    const a=polar(i,R), b=polar((i+1)%N,R);
+    const half=(b.ang-a.ang)/2||Math.PI/N;
+    const start={x:CX+R*Math.cos(a.ang+half*0.42), y:CY+R*Math.sin(a.ang+half*0.42)};
+    const end  ={x:CX+R*Math.cos(b.ang-half*0.42), y:CY+R*Math.sin(b.ang-half*0.42)};
+    const p=document.createElementNS(svgNS,'path');
+    p.setAttribute('d','M'+start.x.toFixed(1)+' '+start.y.toFixed(1)+' A'+R+' '+R+' 0 0 1 '+end.x.toFixed(1)+' '+end.y.toFixed(1));
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke','rgba(59,130,246,.42)');
+    p.setAttribute('stroke-width','1.4');
+    p.setAttribute('marker-end','url(#arw)');
+    g.appendChild(p);
+  }
+  const defs=document.createElementNS(svgNS,'defs');
+  defs.innerHTML='<marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(59,130,246,.75)"/></marker>';
+  svg.appendChild(defs);
+  const hub=document.createElementNS(svgNS,'g');
+  hub.setAttribute('class','hub');
+  const hc=document.createElementNS(svgNS,'circle');
+  hc.setAttribute('cx',CX);hc.setAttribute('cy',CY);hc.setAttribute('r',NV*0.52 - 26);
+  hub.appendChild(hc);
+  const t1=document.createElementNS(svgNS,'text');
+  t1.setAttribute('x',CX);t1.setAttribute('y',CY-4);
+  t1.textContent='6 STEPS';
+  const t2=document.createElementNS(svgNS,'text');
+  t2.setAttribute('x',CX);t2.setAttribute('y',CY+13);
+  t2.setAttribute('style','font-size:9.5px;letter-spacing:1.2px;fill:#8A9BBD;font-weight:600');
+  t2.textContent='1 CYKL';
+  hub.appendChild(t1);hub.appendChild(t2);
+  g.appendChild(hub);
+  SAR.steps.forEach((s,i)=>{
+    const pt=polar(i,R);
+    const n=document.createElementNS(svgNS,'g');
+    n.setAttribute('class','node');
+    n.dataset.i=i;
+    const c=document.createElementNS(svgNS,'circle');
+    c.setAttribute('cx',pt.x.toFixed(1));c.setAttribute('cy',pt.y.toFixed(1));c.setAttribute('r',NODE_R);
+    c.setAttribute('class','dot');
+    c.setAttribute('fill','#152442');
+    c.setAttribute('stroke','rgba(59,130,246,.55)');
+    c.setAttribute('stroke-width','1.4');
+    n.appendChild(c);
+    const num=document.createElementNS(svgNS,'text');
+    num.setAttribute('x',pt.x.toFixed(1));num.setAttribute('y',(pt.y+3.4).toFixed(1));
+    num.setAttribute('style','font-size:11px;fill:#BFD4F5');
+    num.textContent=String(s.n);
+    n.appendChild(num);
+    const lp=polar(i,NV+30);
+    const lab=document.createElementNS(svgNS,'text');
+    lab.setAttribute('x',lp.x.toFixed(1));lab.setAttribute('y',lp.y.toFixed(1));
+    lab.setAttribute('style','fill:#8A9BBD;font-size:9.4px;letter-spacing:.7px');
+    lab.textContent=s.key;
+    n.appendChild(lab);
+    n.addEventListener('click',()=>select(i));
+    n.addEventListener('mouseenter',()=>render(i));
+    g.appendChild(n);
+  });
+  svg.appendChild(g);
+  select(0);
+})();
+function select(i){
+  active=i;
+  $$('.node',loop).forEach(n=>n.classList.toggle('active',+n.dataset.i===i));
+  render(i);
+}
+function render(i){
+  const s=SAR.steps[i];
+  const el=$('#detail');
+  el.innerHTML='';
+  const a=document.createElement('div');a.className='stepno';a.textContent='Krok '+s.n+' z 6';
+  const h=document.createElement('h3');h.textContent=s.key;
+  const p=document.createElement('p');p.textContent=s.desc;
+  const hint=document.createElement('div');hint.className='hint';
+  const prev=SAR.steps[(i+N-1)%N], next=SAR.steps[(i+1)%N];
+  hint.textContent='Poprzedni: '+prev.key+'  ·  Następny: '+next.key+'  ·  Kliknij węzeł, aby przełączyć.';
+  el.appendChild(a);el.appendChild(h);el.appendChild(p);el.appendChild(hint);
+}
+let q='', cluster='all', status='all';
+const STATUS_CLASS={
+  'materiał własny':'s-own','potwierdzone':'s-ok','fakt regulacyjny':'s-ok',
+  'materiał demonstracyjny':'s-demo','materiał pomocniczy':'s-help','materiał administracyjny':'s-help'
+};
+function renderChips(){
+  const box=$('#clusters');box.innerHTML='';
+  const all=document.createElement('button');
+  all.className='chip on';all.dataset.k='all';all.textContent='Wszystkie ('+SAR.items.length+')';
+  box.appendChild(all);
+  SAR.clusters.forEach(c=>{
+    const filed=SAR.items.filter(i=>i.cluster===c.key).length;
+    const n=c.count||filed;
+    const b=document.createElement('button');
+    b.className='chip';b.dataset.k=c.key;
+    const dot=document.createElement('i');dot.style.background=c.color;
+    b.appendChild(dot);
+    b.appendChild(document.createTextNode(c.label+' ('+n+')'));
+    box.appendChild(b);
+  });
+  $$('.chip',box).forEach(b=>b.addEventListener('click',()=>{
+    $$('.chip',box).forEach(x=>x.classList.toggle('on',x===b));
+    cluster=b.dataset.k;renderItems();
+  }));
+}
+function renderStatusChips(){
+  const box=$('#statuses');box.innerHTML='';
+  const vals=['all',...new Set(SAR.items.map(i=>i.status))];
+  vals.forEach(v=>{
+    const n=v==='all'?SAR.items.length:SAR.items.filter(i=>i.status===v).length;
+    const b=document.createElement('button');
+    b.className='chip'+(v==='all'?' on':'');
+    b.dataset.v=v;
+    b.textContent=(v==='all'?'Każdy status':v)+' ('+n+')';
+    box.appendChild(b);
+  });
+  $$('.chip',box).forEach(b=>b.addEventListener('click',()=>{
+    $$('.chip',box).forEach(x=>x.classList.toggle('on',x===b));
+    status=b.dataset.v;renderItems();
+  }));
+}
+function renderItems(){
+  const box=$('#items');box.innerHTML='';
+  const needle=q.trim().toLowerCase();
+  const list=SAR.items.filter(i=>{
+    if(cluster!=='all'&&i.cluster!==cluster)return false;
+    if(status!=='all'&&i.status!==status)return false;
+    if(needle){
+      const hay=(i.title+' '+i.content+' '+i.note+' '+i.status).toLowerCase();
+      if(!hay.includes(needle))return false;
+    }
+    return true;
+  });
+  if(!list.length){
+    box.innerHTML='<div class="empty">Brak materiałów dla wybranych filtrów.</div>';
+    return;
+  }
+  list.forEach(i=>{
+    const c=SAR.clusters.find(c=>c.key===i.cluster);
+    const d=document.createElement('article');d.className='item';
+    const head=document.createElement('div');head.className='head';
+    const num=document.createElement('div');num.className='num';num.textContent=i.id;
+    const h=document.createElement('h4');h.textContent=i.title;
+    head.appendChild(num);head.appendChild(h);
+    const body=document.createElement('div');body.className='body';body.textContent=i.content;
+    const foot=document.createElement('div');foot.className='foot';
+    const tc=document.createElement('span');tc.className='tag c';tc.textContent=c.label;
+    const ts=document.createElement('span');ts.className='tag '+(STATUS_CLASS[i.status]||'s-help');ts.textContent=i.status;
+    foot.appendChild(tc);foot.appendChild(ts);
+    const note=document.createElement('div');note.className='note';note.textContent=i.note;
+    d.appendChild(head);d.appendChild(body);d.appendChild(foot);d.appendChild(note);
+    box.appendChild(d);
+  });
+}
+function renderBoundary(){
+  const tb=$('#btable tbody');
+  SAR.boundary.forEach(b=>{
+    const tr=document.createElement('tr');
+    const c1=document.createElement('td');c1.className='cl';c1.textContent=b.claim;
+    const c2=document.createElement('td');c2.className='st';
+    const d=document.createElement('span');d.className='dot '+(b.ok?'g':'r');
+    d.appendChild(document.createTextNode(b.status));
+    c2.appendChild(d);
+    const c3=document.createElement('td');c3.className='bs';c3.textContent=b.base;
+    tr.appendChild(c1);tr.appendChild(c2);tr.appendChild(c3);
+    tb.appendChild(tr);
+  });
+}
+function renderTimeline(){
+  const box=$('#timeline');box.innerHTML='';
+  SAR.timeline.forEach((t,i)=>{
+    const row=document.createElement('div');row.className='tlrow';
+    const left=document.createElement('div');left.className='tldate';
+    left.textContent=t.date;
+    const rail=document.createElement('div');rail.className='tlrail';
+    const dot=document.createElement('span');dot.className='tldot '+(t.tone==='ok'?'g':'o');
+    rail.appendChild(dot);
+    if(i<SAR.timeline.length-1){const ln=document.createElement('span');ln.className='tlline';rail.appendChild(ln);}
+    const right=document.createElement('div');right.className='tlbody';
+    const h=document.createElement('h4');h.textContent=t.label;
+    const p=document.createElement('p');p.textContent=t.desc;
+    const s=document.createElement('div');s.className='tlsrc';s.textContent='Źródło: '+t.src;
+    right.appendChild(h);right.appendChild(p);right.appendChild(s);
+    row.appendChild(left);row.appendChild(rail);row.appendChild(right);
+    box.appendChild(row);
+  });
+}
+function renderPillars(){
+  const box=$('#pillars');box.innerHTML='';
+  SAR.pillars.forEach(p=>{
+    const d=document.createElement('div');d.className='pillar';
+    const m=document.createElement('div');m.className='mark';m.textContent=p.mark||'';
+    const k=document.createElement('div');k.className='k';k.textContent=p.key;
+    const t=document.createElement('div');t.className='d';t.textContent=p.desc;
+    const s=document.createElement('div');s.className='s';s.textContent='Źródło: '+p.src;
+    d.appendChild(m);d.appendChild(k);d.appendChild(t);d.appendChild(s);
+    box.appendChild(d);
+  });
+}
+$('#q').addEventListener('input',e=>{q=e.target.value;renderItems();});
+$('#motto').textContent=SAR.meta.motto;
+$('#author').textContent=SAR.meta.author;
+$('#paper').textContent=SAR.meta.paper;
+renderChips();renderStatusChips();renderItems();renderBoundary();renderTimeline();renderPillars();
+</script>
+</body>
+</html>
